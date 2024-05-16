@@ -31,7 +31,7 @@ bool BindSocket(int socket, int port)
     return true;
 }
 
-bool ListenSocket(int socket, int backlog)
+bool ListenSocket(int socket, int backlog) //backlog referes to the max length of the queue of pending connections
 {   //putting the socket in a passive state to allow other sockets to connect to ours
     if(listen(socket,backlog) == -1) 
     {

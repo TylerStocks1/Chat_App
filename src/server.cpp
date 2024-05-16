@@ -7,7 +7,7 @@
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
-void HandleCLient(int clientSocket)
+void HandleClient(int clientSocket)
 {
     char buffer[BUFFER_SIZE]; // an array with the size of our BUFFER_SIZE
     while (true) // A NEVER ENDING LOOP OF DOOM!
@@ -43,4 +43,48 @@ void HandleCLient(int clientSocket)
 
 
 
-}
+};
+
+int main()
+{
+    //create a server socket
+    int serverSocket = CreateSocket();
+    if (serverSocket == -1) return -1;
+    //bind the server socket to a port
+    if(!BindSocket(serverSocket, PORT)) 
+    {
+        close(serverSocket);
+        return -1;
+    }
+
+    //set the socket to listen mode
+    if (!ListenSocket(serverSocket, 10)) 
+    {
+        close(serverSocket);
+        return -1;
+    }
+
+    //Accept and handle incoming client connections
+    std::vector<std::thread> threads; //creates a vector (dynamic array) called threads that holds instances of the std::thread class;
+    /*By storing our thread instances in a vector we can manage multiple threads easily. eg; we can make a new thread for each client connection.
+    We can later join the threads back together to save resources once the client has disconnected from the server.*/
+    while (true) //THE LOOP OF DOOM ONCE AGAIN!
+    {
+        int clientSocket = AcceptClient(serverSocket);
+        if(clientSocket != 1)
+        {
+            threads.push_back(std::thread(HandleClient,clientSocket)); 
+            //this adds a new thread to our vector of threads I made earlier. the push_back fnc appends a new thread.
+            //this basically creates a new thread that exectues our handleClient function, with clientsocket as a argument. this lets multplie connections at once.
+        }
+    }
+    
+    for (auto& th : threads)
+    {
+        if (th.joinable())
+        th.join();
+    }
+
+    close(serverSocket);
+    return 0;
+};
