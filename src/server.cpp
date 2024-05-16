@@ -17,7 +17,7 @@ void HandleClient(int clientSocket)
         int bytesReceived = recv(clientSocket, buffer , BUFFER_SIZE, 0);
         if (bytesReceived <= 0)
         {
-            std::cerr << "Error in recv(). Quitting\n";
+            perror("Error in recv(). Quitting");
             break;
         }
         std::cout << "Received: " << buffer << '\n';
@@ -32,10 +32,10 @@ void HandleClient(int clientSocket)
 
         Basically this function sends the data received from the client back to the client itself, ( in this case an echo server ), 
         Echoing back the recieved data to the client.*/ 
-       close(clientSocket);
-       // we close the socket that we created, this is important to release the associated system resources and properly clean up the connection!
-       //close calls to close our socket assoicated with the client connection after the data has been sent back to the client or when an error occurs.
     }
+        close(clientSocket);
+        // we close the socket that we created, this is important to release the associated system resources and properly clean up the connection!
+       //close calls to close our socket assoicated with the client connection after the data has been sent back to the client or when an error occurs.
 };
 
 int main()
